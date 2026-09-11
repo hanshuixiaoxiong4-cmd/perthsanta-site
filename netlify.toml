@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "."
+
+# 让 TinaCMS 的编辑路由可用
+[[redirects]]
+  from = "/admin"
+  to = "/index.html"
+  status = 200

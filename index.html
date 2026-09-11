@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PerthSanta | 首页</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif;}
+        body{
+            background:#111;color:#fff;padding-top:70px;
+            background-image:radial-gradient(#380f0f,#111,#222);
+            background-attachment:fixed;
+            min-height:100vh;
+        }
+        .header-nav{
+            position:fixed;top:0;left:0;width:100%;
+            background:rgba(15,10,10,0.95);
+            border-bottom:1px solid #661c24;
+            z-index:1000;padding:16px 20px;
+            overflow-x:auto;white-space:nowrap;
+        }
+        .header-nav a{color:#eee;text-decoration:none;margin:0 10px;font-size:14px;}
+        .header-nav a.active{color:#e62b3b;font-weight:bold;}
+        .hero{max-width:920px;margin:0 auto;padding:60px 20px;text-align:center;}
+        .hero h1{font-size:42px;color:#e62b3b;margin-bottom:16px;}
+        .hero p{color:#ddd;font-size:18px;margin-bottom:32px;line-height:1.8;}
+        .hero-img{
+            width:100%;max-height:60vh;object-fit:contain;
+            border-radius:14px;margin-bottom:32px;background:#000;
+        }
+        .btn-group{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+        .hero-btn{
+            padding:12px 24px;background:#c42030;color:#fff;
+            border:none;border-radius:10px;font-size:16px;
+            cursor:pointer;text-decoration:none;transition:0.3s;display:inline-block;
+        }
+        .hero-btn:hover{background:#e62b3b;transform:scale(1.03);}
+        .footer{text-align:center;color:#666;font-size:12px;padding:40px 0 20px;}
+    </style>
+</head>
+<body>
+    <div class="header-nav">
+        <a href="index.html" class="active">首页</a>
+        <a href="artists.html">艺人档案</a>
+        <a href="schedule.html">行程表</a>
+        <a href="drama.html">心之所归</a>
+    </div>
+    <div class="hero">
+        <img class="hero-img" src="https://aka.doubaocdn.com/s/Vq55NVUbdS" alt="PerthSanta">
+        <h1>PerthSanta 行程站</h1>
+        <p>Welcome to the world of PerthSantaDomiia<br>汇总官宣行程｜追踪《心之所归》全周期动态</p>
+        <div class="btn-group">
+            <a class="hero-btn" href="schedule.html">📅 查看行程</a>
+            <a class="hero-btn" href="artists.html">👤 艺人档案</a>
+            <a class="hero-btn" href="drama.html">🎬 心之所归剧集动态</a>
+        </div>
+        <div class="footer">Fan-made site · Not affiliated with any agency</div>
+    </div>
+</body>
+</html>

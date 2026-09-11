@@ -1,0 +1,8 @@
+{
+  "name": "perthsanta-site",
+  "version": "1.0.0",
+  "description": "PerthSanta fan site",
+  "scripts": {
+    "build": "node build.js"
+  }
+}

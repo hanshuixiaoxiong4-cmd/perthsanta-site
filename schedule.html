@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行程表 | PerthSanta</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif;}
+        body{
+            background:#111;color:#fff;padding-top:70px;
+            background-image:radial-gradient(#380f0f,#111,#222);
+            background-attachment:fixed;min-height:100vh;
+        }
+        .header-nav{
+            position:fixed;top:0;left:0;width:100%;
+            background:rgba(15,10,10,0.95);
+            border-bottom:1px solid #661c24;
+            z-index:1000;padding:16px 20px;
+            overflow-x:auto;white-space:nowrap;
+        }
+        .header-nav a{color:#eee;text-decoration:none;margin:0 10px;font-size:14px;}
+        .header-nav a.active{color:#e62b3b;font-weight:bold;}
+        .container{max-width:920px;margin:0 auto;padding:20px;}
+        h1{text-align:center;color:#e62b3b;margin-bottom:24px;}
+        .filter-wrap{text-align:center;margin-bottom:24px;}
+        .filter-btn{
+            background:#271414;color:#fff;border:1px solid #552222;
+            padding:7px 12px;border-radius:8px;margin:4px;cursor:pointer;font-size:13px;
+        }
+        .filter-btn.active{background:#c42030;border-color:#e62b3b;}
+        .timeline-item{
+            background:rgba(40,15,15,0.6);border:1px solid #552222;border-radius:14px;
+            padding:18px;margin-bottom:16px;cursor:pointer;transition:0.3s;
+        }
+        .timeline-item:hover{border-color:#e62b3b;background:rgba(60,18,18,0.7);}
+        .item-date{color:#ffaaaa;font-size:14px;margin-bottom:6px;}
+        .item-title{font-size:19px;margin-bottom:8px;}
+        .item-category{display:inline-block;background:#881e2b;padding:3px 8px;border-radius:6px;font-size:12px;margin-bottom:8px;}
+        .item-preview-img{width:100%;max-height:320px;object-fit:contain;background:#000;border-radius:8px;margin:10px 0;}
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;padding:30px;overflow-y:auto;}
+        .modal-content{max-width:850px;margin:0 auto;background:#1a1111;border-radius:16px;padding:24px;}
+        .close{float:right;font-size:32px;cursor:pointer;color:#fff;line-height:1;}
+        .modal-img{width:100%;object-fit:contain;max-height:70vh;margin:12px 0;border-radius:8px;background:#000;}
+        .modal h2{color:#e62b3b;margin-bottom:8px;}
+        .modal p{line-height:1.8;color:#eee;white-space:pre-wrap;}
+        .ext-link{display:inline-block;margin-top:14px;padding:8px 16px;background:#c42030;color:#fff;border-radius:8px;text-decoration:none;font-size:14px;}
+        .loading{text-align:center;color:#888;padding:40px;}
+    </style>
+</head>
+<body>
+    <div class="header-nav">
+        <a href="index.html">首页</a>
+        <a href="artists.html">艺人档案</a>
+        <a href="schedule.html" class="active">行程表</a>
+        <a href="drama.html">心之所归</a>
+    </div>
+    <div class="container">
+        <h1>行程表</h1>
+        <div class="filter-wrap">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="offline">线下活动</button>
+            <button class="filter-btn" data-filter="live">线上直播</button>
+            <button class="filter-btn" data-filter="press">发布会</button>
+        </div>
+        <div id="timelineList"><div class="loading">加载中...</div></div>
+    </div>
+    <div id="modalWrap"></div>
+
+    <script>
+        function openModal(id){document.getElementById('modal'+id).style.display='block';window.scrollTo(0,0);}
+        function closeModal(id){document.getElementById('modal'+id).style.display='none';}
+        window.onclick=e=>{if(e.target.classList.contains('modal'))e.target.style.display='none';};
+
+        let allItems = [];
+
+        fetch('data.json')
+            .then(r=>r.json())
+            .then(data=>{
+                allItems = data.schedule || [];
+                renderList(allItems);
+            })
+            .catch(()=>{document.getElementById('timelineList').innerHTML='<div class="loading">加载失败，请确认 data.json 已生成</div>';});
+
+        function catLabel(c){return {offline:'线下活动',live:'线上直播',press:'发布会'}[c]||c;}
+
+        function renderList(items){
+            const wrap = document.getElementById('timelineList');
+            const modalWrap = document.getElementById('modalWrap');
+            if(items.length===0){wrap.innerHTML='<div class="loading">暂无行程数据</div>';modalWrap='';return;}
+
+            wrap.innerHTML = items.map((s,i)=>`
+                <div class="timeline-item" data-category="${s.category||''}" onclick="openModal(${i})">
+                    <div class="item-date">${(s.eventDate||'').slice(0,10)}</div>
+                    <span class="item-category">${catLabel(s.category)}</span>
+                    <div class="item-title">${s.title||''}</div>
+                    ${s.posterUrl?`<img class="item-preview-img" src="${s.posterUrl}">`:''}
+                </div>
+            `).join('');
+
+            modalWrap.innerHTML = items.map((s,i)=>`
+                <div class="modal" id="modal${i}">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal(${i})">&times;</span>
+                        <h2>${s.title||''}</h2>
+                        <p style="color:#ffaaaa">${(s.eventDate||'').slice(0,10)} · ${catLabel(s.category)}</p>
+                        ${s.posterUrl?`<img class="modal-img" src="${s.posterUrl}">`:''}
+                        <p>${s.body||s.desc||''}</p>
+                        ${s.link?`<a class="ext-link" href="${s.link}" target="_blank">查看原帖 →</a>`:''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn=>{
+            btn.onclick=()=>{
+                document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+                btn.classList.add('active');
+                const type=btn.dataset.filter;
+                const filtered = type==='all' ? allItems : allItems.filter(x=>x.category===type);
+                renderList(filtered);
+            };
+        });
+    </script>
+</body>
+</html>
